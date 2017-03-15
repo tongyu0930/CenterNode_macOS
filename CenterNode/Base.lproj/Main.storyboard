@@ -89,7 +89,7 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="CenterNode" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="430"/>
+                        <rect key="frame" x="0.0" y="0.0" width="567" height="430"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RdH-YB-GXU">
@@ -115,7 +115,7 @@
                                 </connections>
                             </button>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PgX-V8-lfj">
-                                <rect key="frame" x="157" y="388" width="305" height="22"/>
+                                <rect key="frame" x="157" y="388" width="392" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" alignment="left" id="CYx-IY-6qq">
                                     <font key="font" metaFont="system"/>
@@ -124,7 +124,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1vM-dK-ddL">
-                                <rect key="frame" x="159" y="356" width="301" height="22"/>
+                                <rect key="frame" x="159" y="356" width="390" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" alignment="left" id="un5-ra-Tnv">
                                     <font key="font" metaFont="system"/>
@@ -144,7 +144,7 @@
                                 </connections>
                             </button>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cV6-3L-Xmi">
-                                <rect key="frame" x="157" y="322" width="301" height="22"/>
+                                <rect key="frame" x="157" y="322" width="392" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" alignment="left" id="daa-cC-02I">
                                     <font key="font" metaFont="system"/>
@@ -153,7 +153,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fnc-e0-N8s">
-                                <rect key="frame" x="0.0" y="0.0" width="480" height="274"/>
+                                <rect key="frame" x="0.0" y="0.0" width="567" height="274"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" alignment="left" drawsBackground="YES" id="etW-gh-0cH">
                                     <font key="font" metaFont="system" size="18"/>
@@ -172,7 +172,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="735"/>
+            <point key="canvasLocation" x="118.5" y="735"/>
         </scene>
     </scenes>
 </document>

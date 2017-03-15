@@ -38,8 +38,9 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             updateStatusLabel("Scannning")
             myCentralManager.scanForPeripherals(withServices: nil, options: nil )
             scan = true
-            timer1 = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-            timer2 = Timer.scheduledTimer(timeInterval: 9, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
+            timer1 = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+            timer2 = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
+            // timer 最后去掉
         } else {
             timer1.invalidate()
         }
@@ -70,12 +71,42 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         if sender.state == 1 {
             
             updateStatusLabel2("Advertising")
-            let catCharacters: [Character] = ["T", "O", "N", "G"]
-            // TODO: 字母和int不嗯呢个共存啊
-
-            let catString = String(catCharacters)
-
-            myPeripheral.startAdvertising([CBAdvertisementDataLocalNameKey: catString]) // worked // 就先播报名字吧，这样packet还短。单片机怎么过滤信息呢？
+            
+//            let catCharacters:[Character] = ["31", "2", "3", "4"]
+//            let catString = String(catCharacters)
+//            let num = 32
+//            let str = String(num, radix: 16)
+//            let d1 = 21
+//            let b1 = String(d1, radix: 2)
+//            let a = UnicodeScalar(46)
+//            let c = String(a)
+//            let s = "\u{41}"
+//            let n: UInt8 = 0x35
+            
+            let haha = String(format:"%X", 0)   //hex 30
+            let haha1 = String(format:"%X", 1)
+            let haha2 = String(format:"%X", 9)  //hex 39
+            let hex_a = ":"
+            let hex_b = ";"
+            let hex_c = "<"
+            let hex_d = "="
+            let hex_e = ">"
+            let hex_f = "?"
+            var advString: String = "TONG"
+            advString = advString + haha + haha1 + haha2 + hex_a + hex_b + hex_c + hex_d + hex_e + hex_f
+            myPeripheral.startAdvertising([CBAdvertisementDataLocalNameKey: advString])
+            
+//            // create an array of bytes to send
+//            var byteArray = [UInt8]()
+//            byteArray.append(0b11011110); // 'DE'
+//            byteArray.append(0b10101101); // 'AD'
+//            // convert that array into an NSData object
+//            let manufacturerData = NSData(bytes: byteArray,length: byteArray.count)
+//            // build the bundle of data
+//            let dataToBeAdvertised:[String: AnyObject?] = [CBAdvertisementDataLocalNameKey : manufacturerData]
+//            myPeripheral.startAdvertising(dataToBeAdvertised)
+            
+            
             
         } else {
             if myPeripheral.isAdvertising {
@@ -148,15 +179,16 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         //if let manufdata = advertisementData["kCBAdvDataManufacturerData"]
         guard let manufdata = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data else {
             return
-        }
+        } //as? Data 啥意思来着？
         
+//        print(advertisementData[CBAdvertisementDataTxPowerLevelKey]!) // 这并不是RSSI
         packetProcessing1.packetCheck(manufacturerData: manufdata)
     }
 
 
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
         if let hahaha = error {
-            print("silly billy \(hahaha)")
+            print("silly bum \(hahaha)")
         }else{
             print("advertising with no error")
         }
