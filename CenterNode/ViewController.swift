@@ -27,6 +27,8 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     var scan = false
     
+    var alarmFieldStr = ""
+    
     
     
     
@@ -216,7 +218,15 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             return
         } //as? Data 啥意思来着？
 
-        packetProcessing1.packetCheck(manufacturerData: manufdata)
+        let alarmEvent = packetProcessing1.packetCheck(manufacturerData: manufdata)
+        
+        if alarmEvent != nil
+        {
+            alarmFieldStr.append(alarmEvent!)
+            textField3.stringValue = alarmFieldStr
+        }
+        
+        tableView1.reloadData() // 不晓得回一次过来几个peripheral啊，如果一次过来好几个，那么这个table就要每次都refresh
     }
 
 
@@ -245,7 +255,6 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
 //        myCentralManager = CBCentralManager.init(delegate: self, queue: DispatchQueue.main)
         myPeripheral = CBPeripheralManager(delegate: self, queue: nil)
         
-        textField3.stringValue = "fdsafdsafdsafasdfsadfdsafdsafasdffdsafd \n safasdfdsafadsfasfdsafdasdsafdasfdas"
     }
     
     override var representedObject: Any?

@@ -16,7 +16,7 @@ class PacketProcessing
 //    var deviceList  = [Int: Int]()
     var deviceList  = [Int: Array<Int>]()
     
-    func packetCheck(manufacturerData: Data)
+    func packetCheck(manufacturerData: Data) -> String?
     {
         // Data 是 manufacturerData 的数据类型
         
@@ -24,12 +24,12 @@ class PacketProcessing
         {
             if manufacturerData[4] == 0                                     // alarm node
             {
-                return
+                return nil
             }
             
             if (manufacturerData[5] == 0)&&(manufacturerData[6] == 0)       // init packet
             {
-                return
+                return nil
             }
             
             if manufacturerData[10] == 0                                    // self report
@@ -54,7 +54,13 @@ class PacketProcessing
                 // TODO: update table
             }else                                                           // alarm report
             {
+                let alarmN = Int(String(manufacturerData[10]))!
+                let rssi   = Int(String(manufacturerData[9]))!
+                let relayN = Int(String(manufacturerData[8]))!
+
                 
+                let alarmReport: String = "Alarm node No.\(alarmN) is close to relay node No.\(relayN) with RSSI: -\(rssi)dB\n"
+                return alarmReport
             }
             
             
@@ -68,7 +74,7 @@ class PacketProcessing
         
         
         
-        
+        return nil
     }
     
     
