@@ -11,6 +11,8 @@
 		4C010C6E1E5B91AC00BFA1DE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C010C6D1E5B91AC00BFA1DE /* ViewController.swift */; };
 		4C010C701E5B91AC00BFA1DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C010C6F1E5B91AC00BFA1DE /* Assets.xcassets */; };
 		4C010C731E5B91AC00BFA1DE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C010C711E5B91AC00BFA1DE /* Main.storyboard */; };
+		4C153BEC1E7B0F6E005C9895 /* osascript in Resources */ = {isa = PBXBuildFile; fileRef = 4C153BEA1E7B0F6E005C9895 /* osascript */; };
+		4C153BED1E7B0F6E005C9895 /* send_iMessage.scpt in Resources */ = {isa = PBXBuildFile; fileRef = 4C153BEB1E7B0F6E005C9895 /* send_iMessage.scpt */; };
 		4CE45AFB1E6225D5008B5762 /* PacketProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE45AFA1E6225D5008B5762 /* PacketProcessing.swift */; };
 /* End PBXBuildFile section */
 
@@ -21,6 +23,8 @@
 		4C010C6F1E5B91AC00BFA1DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C010C721E5B91AC00BFA1DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4C010C741E5B91AC00BFA1DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4C153BEA1E7B0F6E005C9895 /* osascript */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = osascript; path = ../osascript; sourceTree = "<group>"; };
+		4C153BEB1E7B0F6E005C9895 /* send_iMessage.scpt */ = {isa = PBXFileReference; lastKnownFileType = file; name = send_iMessage.scpt; path = ../send_iMessage.scpt; sourceTree = "<group>"; };
 		4CE45AFA1E6225D5008B5762 /* PacketProcessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketProcessing.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -59,9 +63,19 @@
 				4C010C6D1E5B91AC00BFA1DE /* ViewController.swift */,
 				4C010C6F1E5B91AC00BFA1DE /* Assets.xcassets */,
 				4C010C711E5B91AC00BFA1DE /* Main.storyboard */,
+				4C153BEE1E7B1A54005C9895 /* Files */,
 				4C010C741E5B91AC00BFA1DE /* Info.plist */,
 			);
 			path = CenterNode;
+			sourceTree = "<group>";
+		};
+		4C153BEE1E7B1A54005C9895 /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				4C153BEA1E7B0F6E005C9895 /* osascript */,
+				4C153BEB1E7B0F6E005C9895 /* send_iMessage.scpt */,
+			);
+			name = Files;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,6 +139,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C010C701E5B91AC00BFA1DE /* Assets.xcassets in Resources */,
+				4C153BED1E7B0F6E005C9895 /* send_iMessage.scpt in Resources */,
+				4C153BEC1E7B0F6E005C9895 /* osascript in Resources */,
 				4C010C731E5B91AC00BFA1DE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

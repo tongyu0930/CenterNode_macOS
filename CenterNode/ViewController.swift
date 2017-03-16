@@ -25,6 +25,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     var timer3 = Timer()
 
     var scan = false
+    var iMessage = false
     
     var alarmFieldStr = Array<String>()
     
@@ -126,8 +127,15 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     @IBAction func button4(_ sender: NSButton)
     {
-//        NSWorkspace.shared().launchApplication("/Applications/Send_iMessages.app {"cloud19930930@gmail.com","Message"}")
-
+        textField5.stringValue = ""
+        
+//        let str11 = "cloud19930930@gmail.com"
+//        let str21 = "Test Message"
+//        let task = Process()
+//        task.launchPath = Bundle.main.path(forResource: "osascript", ofType: nil)
+//        let scriptPath = Bundle.main.path(forResource: "send_iMessage", ofType: "scpt")
+//        task.arguments = [scriptPath!, str11, str21]
+//        task.launch()
     }
 
     
@@ -160,6 +168,18 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             }
             
             alarmFieldStr.append(alarmEvent!)
+            
+            if !textField5.stringValue.isEmpty
+            {
+                let task = Process()
+                task.launchPath = Bundle.main.path(forResource: "osascript", ofType: nil)
+                let scriptPath = Bundle.main.path(forResource: "send_iMessage", ofType: "scpt")
+                task.arguments = [scriptPath!, textField5.stringValue, alarmEvent!]
+                task.launch()
+            }else
+            {
+                print("hahaaaa")
+            }
         }
         
         tableView1.reloadData() // 不晓得回一次过来几个peripheral啊，如果一次过来好几个，那么这个table就要每次都refresh
