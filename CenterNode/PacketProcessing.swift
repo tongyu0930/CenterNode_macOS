@@ -12,9 +12,26 @@ import CoreBluetooth
 
 class PacketProcessing
 {
+    var deviceList  = [UInt8: Array<UInt8>]()
     
-//    var deviceList  = [Int: Int]()
-    var deviceList  = [Int: Array<Int>]()
+    var Dict:[Character: String]    = [ "A": ":",
+                                        "B": ";",
+                                        "C": "<",
+                                        "D": "=",
+                                        "E": ">",
+                                        "F": "?",
+                                        "1": "1",
+                                        "2": "2",
+                                        "3": "3",
+                                        "4": "4",
+                                        "5": "5",
+                                        "6": "6",
+                                        "7": "7",
+                                        "8": "8",
+                                        "9": "9",
+                                        "0": "0"]
+    
+    var advList     = Array<String>()
     
     func packetCheck(manufacturerData: Data) -> String?
     {
@@ -32,71 +49,78 @@ class PacketProcessing
                 return nil
             }
             
+            
+            
+            
+            
+            var advString: String = "TONG"  // 不用加level了，反正信息不是在厂商data field
+            let a = UInt8(String(manufacturerData[5]))
+            let adv1: String = transformData(inData: a!)
+            let b = UInt8(String(manufacturerData[6]))
+            let adv2: String = transformData(inData: b!)
+            
+            advString.append(adv1)
+            advString.append(adv2)
+            
+            for tempStr in advList
+            {
+                if tempStr == advString
+                {
+                    return nil
+                }
+            }
+            advList.append(advString)
+            
+            
+            
+            
+            
+            
             if manufacturerData[10] == 0                                    // self report
             {
-//                if let deviceNumber = deviceList[Int(String(manufacturerData[8]))!] {
-//                    deviceList[deviceNumber] = Int(String(manufacturerData[9]))
-//                    print("old device")
-//                } else {
-//                    deviceList[Int(String(manufacturerData[8]))!] = Int(String(manufacturerData[9]))
-//                    print("new device")
-//                }
-                
-//                if deviceList[Int(String(manufacturerData[8]))!] != nil {
-//                    deviceList[Int(String(manufacturerData[8]))!] = [Int(String(manufacturerData[9]))!,0]
-//                    print("old device")
-//                } else {
-//                    deviceList[Int(String(manufacturerData[8]))!] = [Int(String(manufacturerData[9]))!, 0]
-//                    print("new device")
-//                }
-                
-                deviceList[Int(String(manufacturerData[8]))!] = [Int(String(manufacturerData[9]))!,0] // 一句话就够了，修改和添加新的项，都是这句话
-                // TODO: update table
+                deviceList[UInt8(String(manufacturerData[8]))!] = [UInt8(String(manufacturerData[9]))!,0] // 一句话就够了，修改和添加新的项，都是这句话
             }else                                                           // alarm report
             {
-                let alarmN = Int(String(manufacturerData[10]))!
-                let rssi   = Int(String(manufacturerData[9]))!
-                let relayN = Int(String(manufacturerData[8]))!
-
+                let alarmN = UInt8(String(manufacturerData[10]))! // 好像必须得转换两次，不能直接转到int
+                let rssi   = UInt8(String(manufacturerData[9]))!
+                let relayN = UInt8(String(manufacturerData[8]))!
                 
                 let alarmReport: String = "Alarm node No.\(alarmN) is close to relay node No.\(relayN) with RSSI: -\(rssi)dB"
+                
                 return alarmReport
             }
             
+           
+
+
             
-//            let haha3 = Int(String(manufacturerData[4])) // 好像必须得转两次，不能直接转到int
-//            //let haha2 = Int(String(format: "%02X", manufacturerData[0])) // 02: 不管什么数值，都是个2位数
-//            print(haha3!, manufacturerData[4])
-        }else
-        {
-            print("noting")
         }
-        
-        
         
         return nil
     }
     
+    func transformData(inData: UInt8) -> String
+    {
+        let data = [Character](String(format:"%02X", inData).characters)
+        
+        var outstr: String = Dict[data[0]]!
+        outstr += Dict[data[1]]!
+        
+        return String(describing: outstr)
+    }
     
     func counterIncrease()
     {
-        for (deviceNumber, deviceInfo) in deviceList
+        for deviceNumber in deviceList.keys
         {
             deviceList[deviceNumber]![1] += 1
-            print("\(deviceNumber): \(deviceInfo)")
             
-            if deviceList[deviceNumber]![1] >= 10
+            if deviceList[deviceNumber]![1] >= 100
             {
                 deviceList[deviceNumber] = nil
             }
         }
-        
-        
-        // TODO: updata table
-        // TODO: notify user something went wrong
-        
-        
-        
+        // TODO: notify user some relay nodes went wrong
     }
     
 }
