@@ -17,13 +17,16 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     var peripherals:[CBPeripheral] = []
     var myPeripheral = CBPeripheralManager()
     
-    var timer1 = Timer()  // 还是要定时重启扫描，要不然到了两个小时也收不到self_report
+    var packetProcessing1 = PacketProcessing()
+    
+    var timer1 = Timer()  // 还是要定时重启扫描，要不然到了两个小时也收不到self_report? p
     var timer2 = Timer()
+    var timer3 = Timer()
 
     
     var scan = false
     
-    var packetProcessing1 = PacketProcessing()
+    
     
     
     
@@ -31,6 +34,9 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     @IBOutlet weak var textField2: NSTextField!
     @IBOutlet weak var textField3: NSTextField!
     @IBOutlet weak var textField4: NSTextField!
+    @IBOutlet weak var scrollView1: NSScrollView!
+    @IBOutlet weak var tableView1: NSTableView!
+
     
     
     @IBAction func button1(_ sender: NSButton) {
@@ -38,24 +44,30 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             updateStatusLabel("Scannning")
             myCentralManager.scanForPeripherals(withServices: nil, options: nil )
             scan = true
-            timer1 = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-            timer2 = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
+            timer1 = Timer.scheduledTimer(timeInterval: 5000, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+            timer2 = Timer.scheduledTimer(timeInterval: 4999, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
             // timer 最后去掉
+            timer3 = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(timer3Action), userInfo: nil, repeats: true)
         } else {
             timer1.invalidate()
         }
     }
     
+    func timer3Action()
+    {
+        packetProcessing1.counterIncrease()
+    }
     
     
     // called every time interval from the timer
-    func timerAction() {
+    func timerAction()
+    {
         
         if scan == false {
             updateStatusLabel("Scannning")
             myCentralManager.scanForPeripherals(withServices: nil, options: nil )
             scan = true
-            timer2 = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
+            timer2 = Timer.scheduledTimer(timeInterval: 4999, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
             
         } else {
             updateStatusLabel("Not Scanning")
@@ -70,7 +82,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     @IBAction func button2(_ sender: NSButton) {
         if sender.state == 1 {
             
-            updateStatusLabel2("Advertising")
+            updateStatusLabel2("Advertising") // 频率 about 5 times per second, 发送ACK时持续2秒就够了，发送init指令时要持续6秒吧。取决于scan window
             
 //            let catCharacters:[Character] = ["31", "2", "3", "4"]
 //            let catString = String(catCharacters)
@@ -94,7 +106,11 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             let hex_f = "?"
             var advString: String = "TONG"
             advString = advString + haha + haha1 + haha2 + hex_a + hex_b + hex_c + hex_d + hex_e + hex_f
-            myPeripheral.startAdvertising([CBAdvertisementDataLocalNameKey: advString])
+            
+            
+            let utf8 : [UInt8] = [0xE2, 0x82, 0xAC, 0]
+            let str = NSString(bytes: utf8, length: utf8.count, encoding: String.Encoding.utf8.rawValue)
+            myPeripheral.startAdvertising([CBAdvertisementDataLocalNameKey: str!])
             
 //            // create an array of bytes to send
 //            var byteArray = [UInt8]()
@@ -161,7 +177,6 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         case .unsupported: updateStatusLabel2("Peripheral State: Unsupported")
             
         }
-        
     }
     
     
@@ -173,15 +188,14 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         textField2.stringValue = passedString
     }
     
-    
+    // 这部分可以不放在controller里，详见github上下载的例子
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         
         //if let manufdata = advertisementData["kCBAdvDataManufacturerData"]
         guard let manufdata = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data else {
             return
         } //as? Data 啥意思来着？
-        
-//        print(advertisementData[CBAdvertisementDataTxPowerLevelKey]!) // 这并不是RSSI
+
         packetProcessing1.packetCheck(manufacturerData: manufdata)
     }
 
