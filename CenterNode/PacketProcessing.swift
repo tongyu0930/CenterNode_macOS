@@ -59,7 +59,7 @@ class PacketProcessing
                 let relayN = Int(String(manufacturerData[8]))!
 
                 
-                let alarmReport: String = "Alarm node No.\(alarmN) is close to relay node No.\(relayN) with RSSI: -\(rssi)dB\n"
+                let alarmReport: String = "Alarm node No.\(alarmN) is close to relay node No.\(relayN) with RSSI: -\(rssi)dB"
                 return alarmReport
             }
             

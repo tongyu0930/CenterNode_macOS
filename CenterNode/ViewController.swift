@@ -27,7 +27,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     var scan = false
     
-    var alarmFieldStr = ""
+    var alarmFieldStr = Array<String>()
     
     
     
@@ -35,12 +35,11 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     @IBOutlet weak var textField1: NSTextField!
     @IBOutlet weak var textField2: NSTextField!
-    @IBOutlet weak var textField3: NSTextField!
     @IBOutlet weak var textField4: NSTextField!
     @IBOutlet weak var textField5: NSTextField!
 
     @IBOutlet weak var tableView1: NSTableView!
-
+    @IBOutlet weak var tableView2: NSTableView!
     
     
     @IBAction func button1(_ sender: NSButton)
@@ -156,6 +155,11 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
 
     }
 
+    @IBAction func button5(_ sender: NSButton)
+    {
+        alarmFieldStr.removeAll()
+        tableView2.reloadData()
+    }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager)
     {
@@ -223,10 +227,10 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         if alarmEvent != nil
         {
             alarmFieldStr.append(alarmEvent!)
-            textField3.stringValue = alarmFieldStr
         }
         
         tableView1.reloadData() // 不晓得回一次过来几个peripheral啊，如果一次过来好几个，那么这个table就要每次都refresh
+        tableView2.reloadData()
     }
 
 
@@ -267,44 +271,52 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
 
 extension ViewController: NSTableViewDataSource
 {
-    
     func numberOfRows(in tableView: NSTableView) -> Int
     {
-        return packetProcessing1.deviceList.count
+        if tableView == tableView1
+        {
+            return packetProcessing1.deviceList.count
+        }else
+        {
+            return alarmFieldStr.count
+        }
     }
-    
 }
 
 extension ViewController: NSTableViewDelegate
 {
-    
-    
     func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any?
     {
-        var identifierStr = ""
-        identifierStr = tableColumn!.identifier
-        
-        if packetProcessing1.deviceList.count == 0
+        if tableView == tableView1
         {
-            return nil
-        }
-        
-        let key   = Array(packetProcessing1.deviceList.keys).sorted(by: <)[row]
-//        var value = Array(packetProcessing1.deviceList.values)[row]
-        
-        
-        if identifierStr == "Number"
-        {
-            return key
+            var identifierStr = ""
+            identifierStr = tableColumn!.identifier
             
-        }else if identifierStr == "Level"
+            if packetProcessing1.deviceList.count == 0
+            {
+                return nil
+            }
+            
+            let key   = Array(packetProcessing1.deviceList.keys).sorted(by: <)[row]
+            //        var value = Array(packetProcessing1.deviceList.values)[row]
+            
+            
+            if identifierStr == "Number"
+            {
+                return key
+                
+            }else if identifierStr == "Level"
+            {
+                return packetProcessing1.deviceList[key]![0]
+                
+            }else if identifierStr == "Count"
+            {
+                return packetProcessing1.deviceList[key]![1]
+                
+            }
+        }else
         {
-            return packetProcessing1.deviceList[key]![0]
-
-        }else if identifierStr == "Count"
-        {
-            return packetProcessing1.deviceList[key]![1]
-
+            return alarmFieldStr.reversed()[row]
         }
         
         return nil
