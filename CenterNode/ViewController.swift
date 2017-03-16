@@ -47,7 +47,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             textField1.stringValue = "Scannning"
             myCentralManager.scanForPeripherals(withServices: nil, options: nil )
             scan = true
-            timer1 = Timer.scheduledTimer(timeInterval: 6, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+            timer1 = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
             timer2 = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
             timer3 = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timer3Action), userInfo: nil, repeats: true)
         } else
@@ -174,9 +174,6 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
                 let scriptPath = Bundle.main.path(forResource: "send_iMessage", ofType: "scpt")
                 task.arguments = [scriptPath!, textField4.stringValue, alarmEvent!]
                 task.launch()
-            }else
-            {
-                print("hahaaaa")
             }
         }
         
@@ -189,7 +186,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     {
         if let hahaha = error
         {
-            print("silly bum \(hahaha)")
+            print("\(hahaha)")
         }else{
             print("advertising with no error")
         }

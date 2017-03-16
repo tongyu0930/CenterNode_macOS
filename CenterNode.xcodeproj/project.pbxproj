@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4C010C681E5B91AC00BFA1DE /* CenterNode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CenterNode.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C010C681E5B91AC00BFA1DE /* Center Node Console.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Center Node Console.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C010C6B1E5B91AC00BFA1DE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4C010C6D1E5B91AC00BFA1DE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4C010C6F1E5B91AC00BFA1DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -50,7 +50,7 @@
 		4C010C691E5B91AC00BFA1DE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4C010C681E5B91AC00BFA1DE /* CenterNode.app */,
+				4C010C681E5B91AC00BFA1DE /* Center Node Console.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,7 +95,7 @@
 			);
 			name = CenterNode;
 			productName = CenterNode;
-			productReference = 4C010C681E5B91AC00BFA1DE /* CenterNode.app */;
+			productReference = 4C010C681E5B91AC00BFA1DE /* Center Node Console.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -271,7 +271,7 @@
 				INFOPLIST_FILE = CenterNode/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = TONG.CenterNode;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Center Node Console";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -285,7 +285,7 @@
 				INFOPLIST_FILE = CenterNode/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = TONG.CenterNode;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Center Node Console";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

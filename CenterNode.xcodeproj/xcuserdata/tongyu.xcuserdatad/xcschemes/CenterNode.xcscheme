@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4C010C671E5B91AC00BFA1DE"
-               BuildableName = "CenterNode.app"
+               BuildableName = "Center Node Console.app"
                BlueprintName = "CenterNode"
                ReferencedContainer = "container:CenterNode.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4C010C671E5B91AC00BFA1DE"
-            BuildableName = "CenterNode.app"
+            BuildableName = "Center Node Console.app"
             BlueprintName = "CenterNode"
             ReferencedContainer = "container:CenterNode.xcodeproj">
          </BuildableReference>
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4C010C671E5B91AC00BFA1DE"
-            BuildableName = "CenterNode.app"
+            BuildableName = "Center Node Console.app"
             BlueprintName = "CenterNode"
             ReferencedContainer = "container:CenterNode.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4C010C671E5B91AC00BFA1DE"
-            BuildableName = "CenterNode.app"
+            BuildableName = "Center Node Console.app"
             BlueprintName = "CenterNode"
             ReferencedContainer = "container:CenterNode.xcodeproj">
          </BuildableReference>
