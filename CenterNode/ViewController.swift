@@ -33,7 +33,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     @IBOutlet weak var textField1: NSTextField!
     @IBOutlet weak var textField2: NSTextField!
     @IBOutlet weak var textField4: NSTextField!
-    @IBOutlet weak var textField5: NSTextField!
+    @IBOutlet weak var textField5: NSTextField! // Reserved
 
     @IBOutlet weak var tableView1: NSTableView!
     @IBOutlet weak var tableView2: NSTableView!
@@ -120,22 +120,20 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     @IBAction func button3(_ sender: NSButton)
     {
-        textField5.stringValue = textField4.stringValue
-        textField4.stringValue = ""
-    }
-    
-    
-    @IBAction func button4(_ sender: NSButton)
-    {
-        textField5.stringValue = ""
-        
-//        let str11 = "cloud19930930@gmail.com"
-//        let str21 = "Test Message"
-//        let task = Process()
-//        task.launchPath = Bundle.main.path(forResource: "osascript", ofType: nil)
-//        let scriptPath = Bundle.main.path(forResource: "send_iMessage", ofType: "scpt")
-//        task.arguments = [scriptPath!, str11, str21]
-//        task.launch()
+        if sender.title == "Add iMessage ID"
+        {
+            if textField4.stringValue.isEmpty
+            {
+                return
+            }
+            textField4.isEditable = false
+//            textField4.backgroundColor = NSColor.labelColor
+            sender.title = "Remove iMessage ID"
+        }else
+        {
+            textField4.isEditable = true
+            sender.title = "Add iMessage ID"
+        }
     }
 
     
@@ -169,12 +167,12 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             
             alarmFieldStr.append(alarmEvent!)
             
-            if !textField5.stringValue.isEmpty
+            if !textField4.isEditable
             {
                 let task = Process()
                 task.launchPath = Bundle.main.path(forResource: "osascript", ofType: nil)
                 let scriptPath = Bundle.main.path(forResource: "send_iMessage", ofType: "scpt")
-                task.arguments = [scriptPath!, textField5.stringValue, alarmEvent!]
+                task.arguments = [scriptPath!, textField4.stringValue, alarmEvent!]
                 task.launch()
             }else
             {
@@ -223,7 +221,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         {
         case .poweredOn: textField1.stringValue = "Central State: poweredOn" // 当poweredOn时才能下达指令
             
-        case .poweredOff: textField1.stringValue = "Central State: PoweredOFF. Please Turn On Bluetooth!"
+        case .poweredOff: textField1.stringValue = "Please Turn On Bluetooth"
             
         case .resetting: textField1.stringValue = "Central State: Resetting"
             
@@ -242,7 +240,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             
         case .poweredOn: textField2.stringValue = "Peripheral State: poweredOn" // 当poweredOn时才能下达指令
             
-        case .poweredOff: textField2.stringValue = "Peripheral State: PoweredOFF. Please Turn On Bluetooth!"
+        case .poweredOff: textField2.stringValue = "Please Turn On Bluetooth!"
             
         case .resetting: textField2.stringValue = "Peripheral State: Resetting"
             
