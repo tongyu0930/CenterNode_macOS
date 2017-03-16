@@ -11,7 +11,8 @@
 import Cocoa
 import CoreBluetooth
 
-class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDelegate, CBPeripheralManagerDelegate {
+class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDelegate, CBPeripheralManagerDelegate
+{
     
     var myCentralManager = CBCentralManager()
     var peripherals:[CBPeripheral] = []
@@ -34,12 +35,14 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     @IBOutlet weak var textField2: NSTextField!
     @IBOutlet weak var textField3: NSTextField!
     @IBOutlet weak var textField4: NSTextField!
-    @IBOutlet weak var scrollView1: NSScrollView!
+    @IBOutlet weak var textField5: NSTextField!
+
     @IBOutlet weak var tableView1: NSTableView!
 
     
     
-    @IBAction func button1(_ sender: NSButton) {
+    @IBAction func button1(_ sender: NSButton)
+    {
         if sender.state == NSOnState {
             updateStatusLabel("Scannning")
             myCentralManager.scanForPeripherals(withServices: nil, options: nil )
@@ -47,7 +50,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             timer1 = Timer.scheduledTimer(timeInterval: 5000, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
             timer2 = Timer.scheduledTimer(timeInterval: 4999, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
             // timer 最后去掉
-            timer3 = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(timer3Action), userInfo: nil, repeats: true)
+            timer3 = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(timer3Action), userInfo: nil, repeats: true)
         } else {
             timer1.invalidate()
         }
@@ -56,6 +59,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     func timer3Action()
     {
         packetProcessing1.counterIncrease()
+        tableView1.reloadData()
     }
     
     
@@ -79,7 +83,8 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     
     
-    @IBAction func button2(_ sender: NSButton) {
+    @IBAction func button2(_ sender: NSButton)
+    {
         if sender.state == 1 {
             
             updateStatusLabel2("Advertising") // 频率 about 5 times per second, 发送ACK时持续2秒就够了，发送init指令时要持续6秒吧。取决于scan window
@@ -124,8 +129,10 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             
             
             
-        } else {
-            if myPeripheral.isAdvertising {
+        } else
+        {
+            if myPeripheral.isAdvertising
+            {
                 print("was Advertising")
             }
             updateStatusLabel2("Not Advertising")
@@ -135,16 +142,24 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     
-    @IBAction func button3(_ sender: NSButton) {
-        
-//        NSWorkspace.shared().launchApplication("/Applications/Send_iMessages.app {"cloud19930930@gmail.com","Message"}")
+    @IBAction func button3(_ sender: NSButton)
+    {
+        textField5.stringValue = textField4.stringValue
+        textField4.stringValue = ""
     }
     
+    @IBAction func button4(_ sender: NSButton)
+    {
+//        NSWorkspace.shared().launchApplication("/Applications/Send_iMessages.app {"cloud19930930@gmail.com","Message"}")
+
+    }
+
     
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+    func centralManagerDidUpdateState(_ central: CBCentralManager)
+    {
         
-        switch central.state{
-            
+        switch central.state
+        {
         case .poweredOn: updateStatusLabel("Central State: poweredOn") // 当poweredOn时才能下达指令
             
         case .poweredOff: updateStatusLabel("Central State: PoweredOFF. Please Turn On Bluetooth!")
@@ -160,8 +175,8 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
     }
     
-    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        
+    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager)
+    {
         switch peripheral.state{
             
         case .poweredOn: updateStatusLabel2("Peripheral State: poweredOn") // 当poweredOn时才能下达指令
@@ -180,19 +195,24 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     
-    func updateStatusLabel(_ passedString: String ){
+    func updateStatusLabel(_ passedString: String )
+    {
         textField1.stringValue = passedString
     }
     
-    func updateStatusLabel2(_ passedString: String ){
+    func updateStatusLabel2(_ passedString: String )
+    {
         textField2.stringValue = passedString
     }
     
     // 这部分可以不放在controller里，详见github上下载的例子
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber)
+    {
         
         //if let manufdata = advertisementData["kCBAdvDataManufacturerData"]
-        guard let manufdata = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data else {
+        guard let manufdata = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data
+            else
+        {
             return
         } //as? Data 啥意思来着？
 
@@ -200,8 +220,10 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
 
 
-    func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
-        if let hahaha = error {
+    func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?)
+    {
+        if let hahaha = error
+        {
             print("silly bum \(hahaha)")
         }else{
             print("advertising with no error")
@@ -209,22 +231,75 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
 
-    override func viewDidLoad() {
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        
+//        packetProcessing1.deviceList[4] = [3,2]
+//        packetProcessing1.deviceList[1] = [3,0]
+//        packetProcessing1.deviceList[2] = [3,9]
+//        packetProcessing1.deviceList[3] = [2,1]
+
         myCentralManager = CBCentralManager(delegate: self, queue: nil)
-        //myCentralManager = CBCentralManager.init(delegate: self, queue: DispatchQueue.main)
+//        myCentralManager = CBCentralManager.init(delegate: self, queue: DispatchQueue.main)
         myPeripheral = CBPeripheralManager(delegate: self, queue: nil)
         
         textField3.stringValue = "fdsafdsafdsafasdfsadfdsafdsafasdffdsafd \n safasdfdsafadsfasfdsafdasdsafdasfdas"
     }
     
-    override var representedObject: Any? {
-        didSet {
+    override var representedObject: Any?
+        {
+        didSet{
             // Update the view, if already loaded.
         }
     }
 }
+
+extension ViewController: NSTableViewDataSource
+{
+    
+    func numberOfRows(in tableView: NSTableView) -> Int
+    {
+        return packetProcessing1.deviceList.count
+    }
+    
+}
+
+extension ViewController: NSTableViewDelegate
+{
+    
+    
+    func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any?
+    {
+        var identifierStr = ""
+        identifierStr = tableColumn!.identifier
+        
+        if packetProcessing1.deviceList.count == 0
+        {
+            return nil
+        }
+        
+        let key   = Array(packetProcessing1.deviceList.keys).sorted(by: <)[row]
+//        var value = Array(packetProcessing1.deviceList.values)[row]
+        
+        
+        if identifierStr == "Number"
+        {
+            return key
+            
+        }else if identifierStr == "Level"
+        {
+            return packetProcessing1.deviceList[key]![0]
+
+        }else if identifierStr == "Count"
+        {
+            return packetProcessing1.deviceList[key]![1]
+
+        }
+        
+        return nil
+    }
+}
+
 

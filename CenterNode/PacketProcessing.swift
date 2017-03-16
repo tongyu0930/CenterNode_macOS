@@ -74,12 +74,12 @@ class PacketProcessing
     
     func counterIncrease()
     {
-        for var (deviceNumber, deviceInfo) in deviceList
+        for (deviceNumber, deviceInfo) in deviceList
         {
-            deviceInfo[1] += 1
+            deviceList[deviceNumber]![1] += 1
             print("\(deviceNumber): \(deviceInfo)")
             
-            if deviceInfo[1] >= 10
+            if deviceList[deviceNumber]![1] >= 10
             {
                 deviceList[deviceNumber] = nil
             }
