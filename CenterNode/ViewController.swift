@@ -22,7 +22,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     var timer1 = Timer()  // 还是要定时重启扫描，要不然发完ACK后不知道relaynode停止了没
     var timer2 = Timer()
-    var timer3 = Timer()
+
 
     var scan = false
     var iMessage = false
@@ -45,25 +45,30 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         {
             sender.title = "Running"
             textField1.stringValue = "Scannning"
-            myCentralManager.scanForPeripherals(withServices: nil, options: nil )
+            textField2.stringValue = ""
+//            myCentralManager.scanForPeripherals(withServices: nil, options: nil ) // 没看出来和下面那句话的有何不同，表现都一样。
+            myCentralManager.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true] )
             scan = true
-            timer1 = Timer.scheduledTimer(timeInterval: 5000, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-            timer2 = Timer.scheduledTimer(timeInterval: 4999, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
-            timer3 = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timer3Action), userInfo: nil, repeats: true)
+            timer2 = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timer2Action), userInfo: nil, repeats: true)
         } else
         {
-            timer1.invalidate()
             sender.title = "Start"
+            textField1.stringValue = ""
+            myCentralManager.stopScan()
+            timer2.invalidate()
         }
     }
     
     
-    func timer3Action()
+    func timer1Action()
     {
         packetProcessing1.counterIncrease()
         tableView1.reloadData()
-        
-        
+    }
+    
+    
+    func timer2Action()
+    {
         if packetProcessing1.advList.isEmpty
         {
             if myPeripheral.isAdvertising
@@ -79,24 +84,6 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             let advStr = packetProcessing1.advList.removeFirst()
             myPeripheral.startAdvertising([CBAdvertisementDataLocalNameKey: advStr])
             textField2.stringValue = "Is Advertising"
-        }
-    }
-    
-    
-    
-    func timerAction()          // called every time interval from the timer
-    {
-        if scan == false {
-            textField1.stringValue = "Scannning"
-            myCentralManager.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true] )
-            scan = true
-            timer2 = Timer.scheduledTimer(timeInterval: 4999, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
-            
-        } else
-        {
-            textField1.stringValue = "Not Scanning"
-            myCentralManager.stopScan()
-            scan = false
         }
     }
     
@@ -147,13 +134,14 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber)
     {
-        print("dahaha")
         //if let manufdata = advertisementData["kCBAdvDataManufacturerData"]
         guard let manufdata = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data else
         {
             return
         } //as? Data 啥意思来着？
 
+        print("dahaha")
+        
         let alarmEvent = packetProcessing1.packetCheck(manufacturerData: manufdata)
         
         if alarmEvent != nil
@@ -202,6 +190,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         myCentralManager = CBCentralManager(delegate: self, queue: nil)
         myPeripheral     = CBPeripheralManager(delegate: self, queue: nil)
         //myCentralManager = CBCentralManager.init(delegate: self, queue: DispatchQueue.main)
+        timer1 = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timer1Action), userInfo: nil, repeats: true)
     }
     
     
