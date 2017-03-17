@@ -99,6 +99,7 @@ class PacketProcessing
         return nil
     }
     
+    
     func transformData(inData: UInt8) -> String
     {
         let data = [Character](String(format:"%02X", inData).characters)
@@ -108,6 +109,7 @@ class PacketProcessing
         
         return String(describing: outstr)
     }
+    
     
     func counterIncrease()
     {

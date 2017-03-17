@@ -47,8 +47,8 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             textField1.stringValue = "Scannning"
             myCentralManager.scanForPeripherals(withServices: nil, options: nil )
             scan = true
-            timer1 = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-            timer2 = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
+            timer1 = Timer.scheduledTimer(timeInterval: 5000, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+            timer2 = Timer.scheduledTimer(timeInterval: 4999, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
             timer3 = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timer3Action), userInfo: nil, repeats: true)
         } else
         {
@@ -62,6 +62,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     {
         packetProcessing1.counterIncrease()
         tableView1.reloadData()
+        
         
         if packetProcessing1.advList.isEmpty
         {
@@ -87,9 +88,9 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     {
         if scan == false {
             textField1.stringValue = "Scannning"
-            myCentralManager.scanForPeripherals(withServices: nil, options: nil )
+            myCentralManager.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true] )
             scan = true
-            timer2 = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
+            timer2 = Timer.scheduledTimer(timeInterval: 4999, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
             
         } else
         {
@@ -102,7 +103,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     @IBAction func button2(_ sender: NSButton)
     {
-        let initString = "TONG0"    //  relay node一看第一位是30，那就是init command
+        let initString = "TONG00"    //  relay node一看第一位是30，那就是init command
         for tempStr in packetProcessing1.advList
         {
             if tempStr == initString
@@ -146,7 +147,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber)
     {
-        
+        print("dahaha")
         //if let manufdata = advertisementData["kCBAdvDataManufacturerData"]
         guard let manufdata = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data else
         {
