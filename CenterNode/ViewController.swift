@@ -23,8 +23,6 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     var timer1 = Timer()  // 还是要定时重启扫描，要不然发完ACK后不知道relaynode停止了没
     var timer2 = Timer()
 
-
-    var scan = false
     var iMessage = false
     
     var alarmFieldStr = Array<String>()
@@ -48,21 +46,33 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             textField2.stringValue = ""
 //            myCentralManager.scanForPeripherals(withServices: nil, options: nil ) // 没看出来和下面那句话的有何不同，表现都一样。
             myCentralManager.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true] )
-            scan = true
-            timer2 = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timer2Action), userInfo: nil, repeats: true)
+            timer2 = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timer2Action), userInfo: nil, repeats: true)
         } else
         {
-            sender.title = "Start"
-            textField1.stringValue = ""
-            myCentralManager.stopScan()
             timer2.invalidate()
+            if myPeripheral.isAdvertising
+            {
+                myPeripheral.stopAdvertising()
+            }
+            if textField1.stringValue == "Scannning"
+            {
+                myCentralManager.stopScan()
+            }
+            textField1.stringValue = ""
+            textField2.stringValue = ""
+            sender.title = "Start"
         }
     }
     
     
     func timer1Action()
     {
-        packetProcessing1.counterIncrease()
+        if let lostnode = packetProcessing1.counterIncrease()
+        {
+            let message = "Relay node No.\(lostnode) lost!"
+            alarmFieldStr.append(message)
+            tableView2.reloadData()
+        }
         tableView1.reloadData()
     }
     
@@ -75,12 +85,19 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             {
                 textField2.stringValue = "Not Advertising"
                 myPeripheral.stopAdvertising()
+                myCentralManager.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true] )
+                textField1.stringValue = "Scannning"
             }else
             {
                 return
             }
         }else
         {
+            if textField1.stringValue == "Scannning"
+            {
+                myCentralManager.stopScan()
+                textField1.stringValue = "Not Scannning"
+            }
             let advStr = packetProcessing1.advList.removeFirst()
             myPeripheral.startAdvertising([CBAdvertisementDataLocalNameKey: advStr])
             textField2.stringValue = "Is Advertising"
@@ -100,9 +117,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
         
         packetProcessing1.advList.append(initString)
-        packetProcessing1.advList.append(initString)
-        packetProcessing1.advList.append(initString)
-        packetProcessing1.advList.append(initString)    // 延长广播init packet 的时间
+        packetProcessing1.advList.append(initString)    // 延长广播init packet 的时间  2个packet 4秒
     }
     
     
@@ -127,6 +142,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     @IBAction func button5(_ sender: NSButton)
     {
+        packetProcessing1.alarmList.removeAll()
         alarmFieldStr.removeAll()
         tableView2.reloadData()
     }
@@ -134,17 +150,15 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber)
     {
-        //if let manufdata = advertisementData["kCBAdvDataManufacturerData"]
+         //if let manufdata = advertisementData["kCBAdvDataManufacturerData"]
         guard let manufdata = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data else
         {
             return
         } //as? Data 啥意思来着？
 
-        print("dahaha")
+        print(advertisementData[CBAdvertisementDataManufacturerDataKey]!)
         
-        let alarmEvent = packetProcessing1.packetCheck(manufacturerData: manufdata)
-        
-        if alarmEvent != nil
+        if let alarmEvent = packetProcessing1.packetCheck(manufacturerData: manufdata, rssi: RSSI)
         {
             for tempStr in alarmFieldStr
             {
@@ -154,20 +168,21 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
                 }
             }
             
-            alarmFieldStr.append(alarmEvent!)
+            alarmFieldStr.append(alarmEvent)
             
             if !textField4.isEditable
             {
                 let task = Process()
                 task.launchPath = Bundle.main.path(forResource: "osascript", ofType: nil)
                 let scriptPath = Bundle.main.path(forResource: "send_iMessage", ofType: "scpt")
-                task.arguments = [scriptPath!, textField4.stringValue, alarmEvent!]
+                task.arguments = [scriptPath!, textField4.stringValue, alarmEvent]
                 task.launch()
             }
+            
+            tableView2.reloadData()
         }
         
         tableView1.reloadData() // 不晓得回一次过来几个peripheral啊，如果一次过来好几个，那么这个table就要每次都refresh
-        tableView2.reloadData()
     }
 
 
@@ -208,7 +223,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         {
         case .poweredOn: textField1.stringValue = "Central State: poweredOn" // 当poweredOn时才能下达指令
             
-        case .poweredOff: textField1.stringValue = "Please Turn On Bluetooth"
+        case .poweredOff: textField1.stringValue = "Please turn on Bluetooth"
             
         case .resetting: textField1.stringValue = "Central State: Resetting"
             
@@ -227,7 +242,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             
         case .poweredOn: textField2.stringValue = "Peripheral State: poweredOn" // 当poweredOn时才能下达指令
             
-        case .poweredOff: textField2.stringValue = "Please Turn On Bluetooth!"
+        case .poweredOff: textField2.stringValue = ""
             
         case .resetting: textField2.stringValue = "Peripheral State: Resetting"
             
