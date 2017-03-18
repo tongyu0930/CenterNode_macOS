@@ -95,7 +95,7 @@ class PacketProcessing
             {
                 let alarmN = UInt8(String(manufacturerData[7]))!
                 
-                let alarmReport: String = "Alarm node No.\(alarmN) is close to Center node with RSSI: \(rssi)dBm"
+                let alarmReport: String = "Alarm node No.\(alarmN) is close to the Center node with RSSI: \(rssi)dBm"
                 
                 return alarmReport
             }else

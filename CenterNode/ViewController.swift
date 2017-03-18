@@ -156,7 +156,8 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             return
         } //as? Data 啥意思来着？
 
-        print(advertisementData[CBAdvertisementDataManufacturerDataKey]!)
+print(advertisementData[CBAdvertisementDataManufacturerDataKey]!)
+print(RSSI)
         
         if let alarmEvent = packetProcessing1.packetCheck(manufacturerData: manufdata, rssi: RSSI)
         {
