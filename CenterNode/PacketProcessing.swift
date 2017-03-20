@@ -49,7 +49,7 @@ class PacketProcessing
             
             var advString: String = "TONG"  // 不用加level了，反正信息不是在厂商data field
             
-            if manufacturerData[4] == 0     // alarm node
+            if manufacturerData[4] == 0                                         // alarm node
             {
                 let adv1: String = transformData(inData: 0)
                 let adv2: String = transformData(inData: 0)
@@ -59,17 +59,25 @@ class PacketProcessing
                 advString.append(adv2)
                 advString.append(adv3)
                 
-                for tempStr in alarmList    // this is to prevent duplicate alarmReport with different RSSI
+                if manufacturerData[6] < 10
                 {
-                    if tempStr == advString
+                    for tempStr in alarmList    // this is to prevent duplicate alarmReport with different RSSI
                     {
-                        return nil
+                        if tempStr == advString
+                        {
+                            return nil
+                        }
                     }
+                    alarmList.append(advString)
                 }
-                alarmList.append(advString)
                 
-            }else                           // relay node
+            }else                                                               // relay node
             {
+                if manufacturerData[4] != 2                                     // 只收听level2的信息
+                {
+                    return nil
+                }
+                
                 let a = UInt8(String(manufacturerData[5]))
                 let adv1: String = transformData(inData: a!)
                 let b = UInt8(String(manufacturerData[6]))
@@ -78,7 +86,6 @@ class PacketProcessing
                 advString.append(adv2)
             }
             
-            
             for tempStr in advList
             {
                 if tempStr == advString
@@ -86,30 +93,53 @@ class PacketProcessing
                     return nil
                 }
             }
+
             advList.append(advString)
             
             
             
             /*********************************** About view *****************************/
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm:ss"
+
             if manufacturerData[4] == 0
             {
-                let alarmN = UInt8(String(manufacturerData[7]))!
-                
-                let alarmReport: String = "Alarm node No.\(alarmN) is close to the Center node with RSSI: \(rssi)dBm"
-                
-                return alarmReport
+                if manufacturerData[6] < 10
+                {
+                    let alarmN = UInt8(String(manufacturerData[7]))!
+                    
+                    let alarmReport: String = "Alarm node No.\(alarmN) is close to the Center node with RSSI: \(rssi)dBm at \(formatter.string(from: Date()))"
+                    
+                    return alarmReport
+                }
             }else
             {
                 if manufacturerData[10] == 0                                    // self report
                 {
+                    if manufacturerData[7] != 0                                 // center do not need ACK // 如果是level2发了好几个center没听到，无奈求助于同级，偏偏这个求助packet让center听见了，也没关系，同级会告诉center的，anyway。
+                    {
+                        return nil
+                    }
+                    
                     deviceList[UInt8(String(manufacturerData[8]))!] = [UInt8(String(manufacturerData[9]))!,0] // 一句话就够了，修改和添加新的项，都是这句话
                 }else                                                           // alarm report
                 {
-                    let alarmN = UInt8(String(manufacturerData[10]))! // 好像必须得转换两次，不能直接转到int
+                    let alarmN = UInt8(String(manufacturerData[10]))! // 必须得转换两次，不能直接转到int
                     let rssi   = UInt8(String(manufacturerData[9]))!
                     let relayN = UInt8(String(manufacturerData[8]))!
                     
-                    let alarmReport: String = "Alarm node No.\(alarmN) is close to Relay node No.\(relayN) with RSSI: -\(rssi)dBm"
+                    let alarmReportCopy: String = "Alarm node No.\(alarmN) is close to Relay node No.\(relayN) with RSSI: -\(rssi)dBm"
+
+                    for tempStr in alarmList
+                    {
+                        if tempStr == alarmReportCopy
+                        {
+                            return nil
+                        }
+                    }
+                    alarmList.append(alarmReportCopy)
+                    
+                    let alarmReport: String = "Alarm node No.\(alarmN) is close to Relay node No.\(relayN) with RSSI: -\(rssi)dBm at \(formatter.string(from: Date()))"
                     
                     return alarmReport
                 }
@@ -138,7 +168,7 @@ class PacketProcessing
         {
             deviceList[deviceNumber]![1] += 1
             
-            if deviceList[deviceNumber]![1] >= 10
+            if deviceList[deviceNumber]![1] >= 30
             {
                 lostNode = deviceNumber
                 deviceList[deviceNumber] = nil

@@ -69,7 +69,10 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     {
         if let lostnode = packetProcessing1.counterIncrease()
         {
-            let message = "Relay node No.\(lostnode) lost!"
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm:ss"
+            
+            let message = "Relay node No.\(lostnode) lost! at \(formatter.string(from: Date()))"
             alarmFieldStr.append(message)
             tableView2.reloadData()
         }
@@ -154,11 +157,16 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
         guard let manufdata = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data else
         {
             return
-        } //as? Data 啥意思来着？
+        } //as? Data 是 type casting 因为advertisementData这个字典里是any类型的数值，所以你要问问这个数值能不能变为Date类型
 
-print(advertisementData[CBAdvertisementDataManufacturerDataKey]!)
-print(RSSI)
         
+print(advertisementData[CBAdvertisementDataManufacturerDataKey]!,RSSI)
+        
+        if Int(RSSI) < -100
+        {
+            return
+        }
+    
         if let alarmEvent = packetProcessing1.packetCheck(manufacturerData: manufdata, rssi: RSSI)
         {
             for tempStr in alarmFieldStr
