@@ -47,14 +47,14 @@ class PacketProcessing
             
             /*********************************** About ACK *****************************/
             
-            var advString: String = "TONG"  // 不用加level了，反正信息不是在厂商data field
+            var advString: String = "TONG01"  // 不用加level了，反正信息不是在厂商data field
             
             if manufacturerData[4] == 0                                         // alarm node
             {
-                let adv1: String = transformData(inData: 0)
-                let adv2: String = transformData(inData: 0)
+                let adv1: String = transformData(inData: 0) // 00
+                let adv2: String = transformData(inData: 0) // 00
                 let a = UInt8(String(manufacturerData[7]))
-                let adv3: String = transformData(inData: a!)
+                let adv3: String = transformData(inData: a!) // 编号，十六进制（两位）
                 advString.append(adv1)
                 advString.append(adv2)
                 advString.append(adv3)
@@ -68,7 +68,7 @@ class PacketProcessing
                             return nil
                         }
                     }
-                    alarmList.append(advString)
+                    alarmList.append(advString) //"TONG01000002"
                 }
                 
             }else                                                               // relay node
@@ -84,6 +84,7 @@ class PacketProcessing
                 let adv2: String = transformData(inData: b!)
                 advString.append(adv1)
                 advString.append(adv2)
+                advString.append("00")
             }
             
             for tempStr in advList
@@ -94,7 +95,7 @@ class PacketProcessing
                 }
             }
 
-            advList.append(advString)
+            advList.append(advString) //"TONG01030500"
             
             
             
@@ -168,7 +169,7 @@ class PacketProcessing
         {
             deviceList[deviceNumber]![1] += 1
             
-            if deviceList[deviceNumber]![1] >= 30
+            if deviceList[deviceNumber]![1] >= 180
             {
                 lostNode = deviceNumber
                 deviceList[deviceNumber] = nil

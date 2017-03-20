@@ -110,7 +110,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     @IBAction func button2(_ sender: NSButton)
     {
-        let initString = "TONG00"    //  relay node一看第一位是30，那就是init command
+        let initString = "TONG01000000"    //  relay node一看第一位是30，那就是init command
         for tempStr in packetProcessing1.advList
         {
             if tempStr == initString
