@@ -40,7 +40,7 @@ class PacketProcessing
         
         if (manufacturerData[0] == 84)&&(manufacturerData[1] == 79)&&(manufacturerData[2] == 78)&&(manufacturerData[3] == 71)
         {
-            if (manufacturerData[5] == 0)&&(manufacturerData[6] == 0)       // init packet
+            if (manufacturerData[4] >= 2)&&(manufacturerData[5] == 4)       // init packet
             {
                 return nil
             }
@@ -51,41 +51,48 @@ class PacketProcessing
             
             if manufacturerData[4] == 0                                         // alarm node
             {
-                let adv1: String = transformData(inData: 0) // 00
+                let adv1: String = transformData(inData: 2) // 02
                 let adv2: String = transformData(inData: 0) // 00
-                let a = UInt8(String(manufacturerData[7]))
+                let a = UInt8(String(manufacturerData[6]))
                 let adv3: String = transformData(inData: a!) // 编号，十六进制（两位）
                 advString.append(adv1)
                 advString.append(adv2)
                 advString.append(adv3)
                 
-                if manufacturerData[6] < 10
+
+                for tempStr in alarmList    // this is to prevent duplicate alarmReport with different RSSI
                 {
-                    for tempStr in alarmList    // this is to prevent duplicate alarmReport with different RSSI
+                    if tempStr == advString
                     {
-                        if tempStr == advString
+                        if manufacturerData[7] <= 10 // <= alarm node's minimum advertising time
                         {
+                            return nil
+                        }else
+                        {
+                            advList.append(advString) // 如果大于最小时间就在向advlist加个ack
                             return nil
                         }
                     }
-                    alarmList.append(advString) //"TONG01000002"
                 }
+                // 如果没有找到说明是新alarm signal，就从这里往下走
+                alarmList.append(advString) //"TONG01000002"
                 
-            }else                                                               // relay node
+                
+            }else if manufacturerData[4] == 2                                   // relay node only == level 2
             {
-                if manufacturerData[4] != 2                                     // 只收听level2的信息
-                {
-                    return nil
-                }
-                
-                let a = UInt8(String(manufacturerData[5]))
+                let adv0: String = transformData(inData: 2) // 02
+                let a = UInt8(String(manufacturerData[6]))
                 let adv1: String = transformData(inData: a!)
-                let b = UInt8(String(manufacturerData[6]))
+                let b = UInt8(String(manufacturerData[7]))
                 let adv2: String = transformData(inData: b!)
+                advString.append(adv0)
                 advString.append(adv1)
                 advString.append(adv2)
-                advString.append("00")
+            }else
+            {
+                return nil
             }
+            
             
             for tempStr in advList
             {
@@ -95,7 +102,7 @@ class PacketProcessing
                 }
             }
 
-            advList.append(advString) //"TONG01030500"
+            advList.append(advString) //"TONG01****"
             
             
             
@@ -103,31 +110,22 @@ class PacketProcessing
             let formatter = DateFormatter()
             formatter.dateFormat = "HH:mm:ss"
 
-            if manufacturerData[4] == 0
+            if manufacturerData[4] == 0         // create alarm report
             {
-                if manufacturerData[6] < 10
-                {
-                    let alarmN = UInt8(String(manufacturerData[7]))!
-                    
-                    let alarmReport: String = "Alarm node No.\(alarmN) is close to the Center node with RSSI: \(rssi)dBm at \(formatter.string(from: Date()))"
-                    
-                    return alarmReport
-                }
+                let alarmN = UInt8(String(manufacturerData[6]))!
+                let alarmReport: String = "Alarm node No.\(alarmN) is close to the Center node with RSSI: \(rssi)dBm at \(formatter.string(from: Date()))"
+                return alarmReport
+                
             }else
             {
-                if manufacturerData[10] == 0                                    // self report
+                if manufacturerData[8] == 1, manufacturerData[5] == 1                                      // self report
                 {
-                    if manufacturerData[7] != 0                                 // center do not need ACK // 如果是level2发了好几个center没听到，无奈求助于同级，偏偏这个求助packet让center听见了，也没关系，同级会告诉center的，anyway。
-                    {
-                        return nil
-                    }
-                    
-                    deviceList[UInt8(String(manufacturerData[8]))!] = [UInt8(String(manufacturerData[9]))!,0] // 一句话就够了，修改和添加新的项，都是这句话
-                }else                                                           // alarm report
+                    deviceList[UInt8(String(manufacturerData[9]))!] = [UInt8(String(manufacturerData[10]))!,0] // 一句话就够了，修改和添加新的项，都是这句话 最后面的0是清零count
+                }else if manufacturerData[8] == 2, manufacturerData[5] == 1                                 // alarm report
                 {
-                    let alarmN = UInt8(String(manufacturerData[10]))! // 必须得转换两次，不能直接转到int
-                    let rssi   = UInt8(String(manufacturerData[9]))!
-                    let relayN = UInt8(String(manufacturerData[8]))!
+                    let alarmN = UInt8(String(manufacturerData[11]))! // 必须得转换两次，不能直接转到int
+                    let rssi   = UInt8(String(manufacturerData[10]))!
+                    let relayN = UInt8(String(manufacturerData[9]))!
                     
                     let alarmReportCopy: String = "Alarm node No.\(alarmN) is close to Relay node No.\(relayN) with RSSI: -\(rssi)dBm"
 
@@ -169,7 +167,7 @@ class PacketProcessing
         {
             deviceList[deviceNumber]![1] += 1
             
-            if deviceList[deviceNumber]![1] >= 180
+            if deviceList[deviceNumber]![1] >= 30
             {
                 lostNode = deviceNumber
                 deviceList[deviceNumber] = nil

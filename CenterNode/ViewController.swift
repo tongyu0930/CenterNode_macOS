@@ -46,7 +46,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
             textField2.stringValue = ""
 //            myCentralManager.scanForPeripherals(withServices: nil, options: nil ) // 没看出来和下面那句话的有何不同，表现都一样。
             myCentralManager.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true] )
-            timer2 = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timer2Action), userInfo: nil, repeats: true)
+            timer2 = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(timer2Action), userInfo: nil, repeats: true)
         } else
         {
             timer2.invalidate()
@@ -101,7 +101,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
                 myCentralManager.stopScan()
                 textField1.stringValue = "Not Scannning"
             }
-            let advStr = packetProcessing1.advList.removeFirst()
+            let advStr = packetProcessing1.advList.removeFirst()                    // TODO: 减小广播频率
             myPeripheral.startAdvertising([CBAdvertisementDataLocalNameKey: advStr])
             textField2.stringValue = "Is Advertising"
         }
@@ -110,7 +110,7 @@ class ViewController: NSViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     @IBAction func button2(_ sender: NSButton)
     {
-        let initString = "TONG01000000"    //  relay node一看第一位是30，那就是init command
+        let initString = "TONG0104"    //  relay node一看第一位是30，那就是init command
         for tempStr in packetProcessing1.advList
         {
             if tempStr == initString
@@ -177,9 +177,9 @@ print(advertisementData[CBAdvertisementDataManufacturerDataKey]!,RSSI)
                 }
             }
             
-            alarmFieldStr.append(alarmEvent)
+            alarmFieldStr.append(alarmEvent)        // add to bulletin data source
             
-            if !textField4.isEditable
+            if !textField4.isEditable               // iMessage send  有问题，如果同时过来两个message，只能发出去一个
             {
                 let task = Process()
                 task.launchPath = Bundle.main.path(forResource: "osascript", ofType: nil)
@@ -191,7 +191,7 @@ print(advertisementData[CBAdvertisementDataManufacturerDataKey]!,RSSI)
             tableView2.reloadData()
         }
         
-        tableView1.reloadData() // 不晓得回一次过来几个peripheral啊，如果一次过来好几个，那么这个table就要每次都refresh
+        tableView1.reloadData()
     }
 
 
@@ -283,7 +283,7 @@ extension ViewController: NSTableViewDelegate
 {
     func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any?
     {
-        if tableView == tableView1
+        if tableView == tableView1                      // relay node list
         {
             var identifierStr = ""
             identifierStr = tableColumn!.identifier
@@ -312,7 +312,7 @@ extension ViewController: NSTableViewDelegate
             }
         }else
         {
-            return alarmFieldStr.reversed()[row]
+            return alarmFieldStr.reversed()[row]        // bulletin
         }
         
         return nil
